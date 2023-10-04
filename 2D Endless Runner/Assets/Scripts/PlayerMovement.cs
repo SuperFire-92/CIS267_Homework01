@@ -35,14 +35,22 @@ public class PlayerMovement : MonoBehaviour
             //If clicking A or Left, change trajectory to the left
             if (Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow))
             {
+                float curDirection = playerRigidBody.velocity.x;
                 playerRigidBody.velocity = new Vector2(-1 * speed, playerRigidBody.velocity.y);
-                makeWall(true);
+                if (curDirection > 0)
+                {
+                    makeWall(true);
+                }
             }
             //If clicking D or Right, change the trajectory to the right
             if (Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow))
             {
+                float curDirection = playerRigidBody.velocity.x;
                 playerRigidBody.velocity = new Vector2(1 * speed, playerRigidBody.velocity.y);
-                makeWall(false);
+                if (curDirection < 0)
+                {
+                    makeWall(false);
+                }
             }
         }
     }
