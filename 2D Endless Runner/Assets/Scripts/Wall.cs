@@ -13,7 +13,6 @@ public class Wall : MonoBehaviour
         if (transform.position.x > 0)
         {
             transform.localScale = new Vector3(transform.localScale.x * -1, transform.localScale.y, transform.localScale.z);
-            GetComponentInChildren<ObjectSpawner>().speed = wallSpeed;
         }
     }
     void Update()
@@ -27,7 +26,6 @@ public class Wall : MonoBehaviour
 
     public void DestroyObject()
     {
-        GetComponentInChildren<ObjectSpawner>().DestroyObject();
         Destroy(this.gameObject);
     }
 
