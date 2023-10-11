@@ -11,7 +11,7 @@ public class MiniWall : MonoBehaviour
     private SpriteRenderer childRenderer;
     private void Start()
     {
-        timer = 1;
+        timer = 1f;
         renderer = GetComponent<SpriteRenderer>();
         childRenderer = GetComponentInChildren<SpriteRenderer>();
     }
