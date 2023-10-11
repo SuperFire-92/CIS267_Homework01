@@ -821,11 +821,9 @@ MonoBehaviour:
   background: {fileID: 22642368257899114, guid: 6f62ca4f76cdc5a45a220b60f3a126d6, type: 3}
   spike: {fileID: 5219685819148193302, guid: 20d7038c8a8cd9943b8f15c461ed3716, type: 3}
   gameOverDisplay: {fileID: 172735895}
-  spawnZone: {fileID: 7064806012010317672, guid: 3e4924addeef7624f8206ee8e2d79a5f, type: 3}
   walls: []
   backgrounds: []
   spikes: []
-  spawnZones: []
 --- !u!4 &761493607
 Transform:
   m_ObjectHideFlags: 0
