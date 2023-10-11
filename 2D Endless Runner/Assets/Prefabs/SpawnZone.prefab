@@ -44,3 +44,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9454095e5551ed249bd85c197e3ed347, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  speed: 0
+  dead: 0
+  listOfEnemies:
+  - {fileID: 404866817558481585, guid: c8ae6e985d434d34aaa35bc1d3e4a1ad, type: 3}
+  - {fileID: 590993486845635385, guid: d4940042a13966748980e727a53cd6bf, type: 3}
+  listOfCollectables:
+  - {fileID: 5383499391461011530, guid: 9f5888e3738770c4f9da3cf3d257dcab, type: 3}
+  - {fileID: 1824322750800215798, guid: 969b9e907098d1147b388531b6de6d18, type: 3}

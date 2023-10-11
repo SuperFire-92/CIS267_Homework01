@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,6 +17,7 @@ public class GameManager : MonoBehaviour
     public GameObject spike;
     public GameObject gameOverDisplay;
     public GameObject spawnZone;
+    public TMP_Text scoreCounter;
     private int distance;
     private int oldDistance;
     private float distanceTimer;
@@ -30,6 +32,10 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        //Set the starting score
+        score = 0;
+        //Update the onscreen score
+        addScore(0);
         //Make sure the game is running
         gameEnd = false;
         //Set the changedDistance to false
@@ -90,6 +96,13 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public void addScore(int num)
+    {
+        score = score + num;
+        Debug.Log("Current Score: " + score);
+        scoreCounter.text = "Score: " + score.ToString();
+    }
+
     public void endGame()
     {
         //Pause all objects
@@ -105,7 +118,10 @@ public class GameManager : MonoBehaviour
         {
             spikes[i].GetComponent<Spike>().pauseObject();
         }
-
+        for (int i = 0; i < spawnZones.Count; i++)
+        {
+            spawnZones[i].GetComponent<SpawnZone>().pauseObject();
+        }
         //Add a game over display
         gameOverDisplay.SetActive(true);
     }
@@ -136,15 +152,16 @@ public class GameManager : MonoBehaviour
             changedDistance = false;
         }
         GameObject newWall = Instantiate(wall);
-        newWall.GetComponent<Transform>().position = new Vector3 (distance, 20, 0);
+        newWall.GetComponent<Transform>().position = new Vector2 (distance, 20);
         newWall.GetComponent<Wall>().wallSpeed = speed;
         walls.Add(newWall);
         newWall = Instantiate(wall);
-        newWall.GetComponent<Transform>().position = new Vector3 (-distance, 20, 0);
+        newWall.GetComponent<Transform>().position = new Vector2 (-distance, 20);
         newWall.GetComponent<Wall>().wallSpeed = speed;
         walls.Add(newWall);
 
         destroyWalls();
+        destroySpawnZones();
     }
 
     //Creates two new walls at the given x and y coordinates
@@ -165,18 +182,21 @@ public class GameManager : MonoBehaviour
         walls.Add(newWall);
 
         destroyWalls();
+        destroySpawnZones();
     }
 
+    //Create spawn zones that will spawn enemies and collectables
     public void createSpawnZones()
     {
         GameObject newSpawnZone = Instantiate(spawnZone, new Vector2(distance - 3, 20), new Quaternion(0f,0f,0f,1f));
         newSpawnZone.GetComponent<SpawnZone>().speed = speed;
         spawnZones.Add(newSpawnZone);
-        newSpawnZone = Instantiate(spawnZone, new Vector2(-distance + 3, 20), new Quaternion(0f, 0f, 0f, 1f));
+        newSpawnZone = Instantiate(spawnZone, new Vector2(-distance + 3, 23), new Quaternion(0f, 0f, 0f, 1f));
         spawnZones.Add(newSpawnZone);
         newSpawnZone.GetComponent<SpawnZone>().speed = speed;
     }
 
+    //Create spikes in between wall gaps to prevent the player from escaping the walls
     public void createSpikes()
     {
         for (int i = oldDistance; i > distance; i--)
@@ -191,21 +211,10 @@ public class GameManager : MonoBehaviour
             spikes.Add(newSpike);
         }
 
-        //for (int i = distance + 1; i >= oldDistance; i--)
-        //{
-        //    GameObject newSpike = Instantiate(spike);
-        //    newSpike.GetComponent<Transform>().position = new Vector3(i - 2.5f, 15f, 0);
-        //    newSpike.GetComponent<Spike>().spikeSpeed = speed;
-        //    spikes.Add(newSpike);
-        //    newSpike = Instantiate(spike);
-        //    newSpike.GetComponent<Transform>().position = new Vector3(-i + 2.5f, 15f, 0);
-        //    newSpike.GetComponent<Spike>().spikeSpeed = speed;
-        //    spikes.Add(newSpike);
-        //}
-
         destroySpikes();
     }
 
+    //Destroy all dead spikes
     public void destroySpikes()
     {
         for (int i = 0; i < spikes.Count; i++)
@@ -219,6 +228,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //Destroy all dead walls
     public void destroyWalls()
     {
         for (int i = 0; i < walls.Count; i++)
@@ -232,11 +242,21 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //Destroy all dead spawnZones
     public void destroySpawnZones()
     {
-
+        for (int i = 0; i < spawnZones.Count; i++)
+        {
+            SpawnZone curSpawnZone = spawnZones[i].GetComponent<SpawnZone>();
+            if (curSpawnZone.dead)
+            {
+                curSpawnZone.DestroyObject();
+                spawnZones.RemoveAt(i);
+            }
+        }
     }
 
+    //Create new backgrounds
     public void createBackground(float objY)
     {
         GameObject newBackground = Instantiate(background);
@@ -247,6 +267,7 @@ public class GameManager : MonoBehaviour
         destroyBackgrounds();
     }
 
+    //Destroy all dead backgrounds
     public void destroyBackgrounds()
     {
         for (int i = 0; i < backgrounds.Count; i++)

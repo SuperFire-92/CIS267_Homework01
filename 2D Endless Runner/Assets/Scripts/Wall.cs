@@ -6,7 +6,7 @@ public class Wall : MonoBehaviour
 {
     public float wallSpeed;
     public bool dead;
-    // Update is called once per frame
+
     private void Start()
     {
         dead = false;

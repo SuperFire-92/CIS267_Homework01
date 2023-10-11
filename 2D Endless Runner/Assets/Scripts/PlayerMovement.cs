@@ -71,5 +71,15 @@ public class PlayerMovement : MonoBehaviour
             dead = true;
             playerRigidBody.velocity = new Vector2(0, 0);
         }
+
+        if (collision.gameObject.CompareTag("Collectable"))
+        {
+            Collectable col = collision.gameObject.GetComponent<Collectable>();
+
+            if (col.collectableType == 0)
+            {
+                gameManager.GetComponent<GameManager>().addScore(1);
+            }
+        }
     }
 }
