@@ -21,8 +21,13 @@ public class PlayerMovement : MonoBehaviour
         playerRigidBody.velocity = new Vector2 (-1 * speed, playerRigidBody.velocity.y);
     }
 
-    // Update is called once per frame
-    void Update()
+    //// Update is called once per frame
+    //void Update()
+    //{
+    //    changeDirection();
+    //}
+
+    private void LateUpdate()
     {
         changeDirection();
     }
@@ -55,6 +60,12 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    public void forceMoreSpeed(float multiplier)
+    {
+        playerRigidBody.velocity = new Vector2(playerRigidBody.velocity.x * multiplier, playerRigidBody.velocity.y);
+        speed = speed * multiplier;
+    }
+
     public void makeWall(bool LoR)
     {
         GameObject curMini = Instantiate(miniWall);
@@ -79,6 +90,10 @@ public class PlayerMovement : MonoBehaviour
             if (col.collectableType == 0)
             {
                 gameManager.GetComponent<GameManager>().addScore(1);
+            }
+            if (col.collectableType == 1)
+            {
+                gameManager.GetComponent<GameManager>().slowdownTimer = 2f;
             }
         }
     }

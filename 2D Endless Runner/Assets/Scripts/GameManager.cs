@@ -23,6 +23,8 @@ public class GameManager : MonoBehaviour
     private float distanceTimer;
     private float wallTimer;
     private float backgroundTimer;
+    public float slowdownTimer;
+    public bool slowdown;
     private bool changedDistance;
     //These lists contain references to every object of its type
     public List<GameObject> walls;
@@ -56,6 +58,7 @@ public class GameManager : MonoBehaviour
         //Create the first two layers of background
         createBackground(0);
         createBackground(10);
+        slowdown = false;
     }
 
     private void Update()
@@ -87,6 +90,25 @@ public class GameManager : MonoBehaviour
                 //If the background timer has finished, create a new background
                 createBackground(20);
                 resetBackgroundTimer();
+            }
+            if (slowdownTimer > 0)
+            {
+                Time.timeScale = 0.5f;
+                slowdownTimer -= Time.deltaTime;
+                if (slowdown == false)
+                {
+                    player.GetComponent<PlayerMovement>().forceMoreSpeed(2);
+                }
+                slowdown = true;
+            }
+            else
+            {
+                Time.timeScale = 1f;
+                if (slowdown == true)
+                {
+                    player.GetComponent<PlayerMovement>().forceMoreSpeed(0.5f);
+                    slowdown = false;
+                }
             }
         }
         else
