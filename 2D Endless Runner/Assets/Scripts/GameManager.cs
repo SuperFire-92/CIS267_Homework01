@@ -15,6 +15,7 @@ public class GameManager : MonoBehaviour
     public GameObject background;
     public GameObject spike;
     public GameObject gameOverDisplay;
+    public GameObject spawnZone;
     private int distance;
     private int oldDistance;
     private float distanceTimer;
@@ -25,6 +26,7 @@ public class GameManager : MonoBehaviour
     public List<GameObject> walls;
     public List<GameObject> backgrounds;
     public List<GameObject> spikes;
+    public List<GameObject> spawnZones;
 
     private void Start()
     {
@@ -33,7 +35,7 @@ public class GameManager : MonoBehaviour
         //Set the changedDistance to false
         changedDistance = false;
         //Set the distance between walls to start with
-        distance = 5;
+        distance = 6;
         //Create a randomly generated number for the distance timer
         resetDistanceTimer();
         //Set the wall timer to immediately make a new wall
@@ -41,7 +43,7 @@ public class GameManager : MonoBehaviour
         //Do the same with the background timer
         backgroundTimer = 0;
         //Set the speed of the walls
-        speed = 9;
+        speed = 7;
         //Create the first two layers of walls
         createWalls(0);
         createWalls(10);
@@ -63,7 +65,7 @@ public class GameManager : MonoBehaviour
             {
                 oldDistance = distance;
                 //If the distance timer has finished, create a new distance
-                distance = Random.Range(5, 9);
+                distance = Random.Range(6, 9);
                 resetDistanceTimer();
                 changedDistance = true;
             }
@@ -71,6 +73,7 @@ public class GameManager : MonoBehaviour
             {
                 //If the wall timer has finished, create new walls.
                 createWalls();
+                createSpawnZones();
                 resetWallTimer();
             }
             if (backgroundTimer <= 0)
@@ -110,7 +113,7 @@ public class GameManager : MonoBehaviour
     //Resets the distance timer
     public void resetDistanceTimer()
     {
-        distanceTimer = Random.Range(3, 3);
+        distanceTimer = Random.Range(3, 6);
     }
 
     //Resets the wall timer
@@ -153,15 +156,25 @@ public class GameManager : MonoBehaviour
             changedDistance = false;
         }
         GameObject newWall = Instantiate(wall);
-        newWall.GetComponent<Transform>().position = new Vector3 (distance, objY, 0);
+        newWall.GetComponent<Transform>().position = new Vector2 (distance, objY);
         newWall.GetComponent<Wall>().wallSpeed = speed;
         walls.Add(newWall);
         newWall = Instantiate(wall);
-        newWall.GetComponent<Transform>().position = new Vector3 (-distance, objY, 0);
+        newWall.GetComponent<Transform>().position = new Vector2 (-distance, objY);
         newWall.GetComponent<Wall>().wallSpeed = speed;
         walls.Add(newWall);
 
         destroyWalls();
+    }
+
+    public void createSpawnZones()
+    {
+        GameObject newSpawnZone = Instantiate(spawnZone, new Vector2(distance - 3, 20), new Quaternion(0f,0f,0f,1f));
+        newSpawnZone.GetComponent<SpawnZone>().speed = speed;
+        spawnZones.Add(newSpawnZone);
+        newSpawnZone = Instantiate(spawnZone, new Vector2(-distance + 3, 20), new Quaternion(0f, 0f, 0f, 1f));
+        spawnZones.Add(newSpawnZone);
+        newSpawnZone.GetComponent<SpawnZone>().speed = speed;
     }
 
     public void createSpikes()
@@ -217,6 +230,11 @@ public class GameManager : MonoBehaviour
                 walls.RemoveAt(i);
             }
         }
+    }
+
+    public void destroySpawnZones()
+    {
+
     }
 
     public void createBackground(float objY)
