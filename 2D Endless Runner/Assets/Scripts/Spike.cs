@@ -5,6 +5,7 @@ using UnityEngine;
 public class Spike : MonoBehaviour
 {
     public float spikeSpeed;
+    public float multipler;
     public bool dead;
     private void Start()
     {
@@ -16,7 +17,7 @@ public class Spike : MonoBehaviour
     }
     void Update()
     {
-        transform.position = new Vector3(transform.position.x, transform.position.y - spikeSpeed * Time.deltaTime, transform.position.z);
+        transform.position = new Vector3(transform.position.x, transform.position.y - spikeSpeed * multipler * Time.deltaTime, transform.position.z);
         if (transform.position.y < -20)
         {
             dead = true;

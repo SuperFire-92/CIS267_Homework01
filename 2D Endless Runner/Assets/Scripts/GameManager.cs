@@ -8,9 +8,10 @@ using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
-    private int score;
+    private float score;
     public bool gameEnd;
     public float speed;
+    public float multipler;
     public GameObject player;
     public GameObject wall;
     public GameObject background;
@@ -36,6 +37,8 @@ public class GameManager : MonoBehaviour
     {
         //Set the starting score
         score = 0;
+        //Set the current speed multipler to 1
+        multipler = 1f;
         //Update the onscreen score
         addScore(0);
         //Make sure the game is running
@@ -58,6 +61,7 @@ public class GameManager : MonoBehaviour
         //Create the first two layers of background
         createBackground(0);
         createBackground(10);
+        //Set the slowdown to be false
         slowdown = false;
     }
 
@@ -67,9 +71,11 @@ public class GameManager : MonoBehaviour
         if (!gameEnd)
         {
             //Subtract time from both timers
-            distanceTimer = distanceTimer - Time.deltaTime;
-            wallTimer = wallTimer - Time.deltaTime;
-            backgroundTimer = backgroundTimer - Time.deltaTime;
+            distanceTimer = distanceTimer - Time.deltaTime * multipler;
+            wallTimer = wallTimer - Time.deltaTime * multipler;
+            backgroundTimer = backgroundTimer - Time.deltaTime * multipler;
+            //===================================================================
+            //Handle All Timers
             if (distanceTimer <= 0)
             {
                 oldDistance = distance;
@@ -93,23 +99,27 @@ public class GameManager : MonoBehaviour
             }
             if (slowdownTimer > 0)
             {
-                Time.timeScale = 0.5f;
                 slowdownTimer -= Time.deltaTime;
                 if (slowdown == false)
                 {
-                    player.GetComponent<PlayerMovement>().forceMoreSpeed(2);
+                    multipler = 0.5f;
+                    addMultipler();
                 }
                 slowdown = true;
             }
             else
             {
-                Time.timeScale = 1f;
                 if (slowdown == true)
                 {
-                    player.GetComponent<PlayerMovement>().forceMoreSpeed(0.5f);
+                    multipler = 1f;
+                    addMultipler();
                     slowdown = false;
                 }
             }
+            //Add 1 to the score every second
+            score = score + Time.deltaTime;
+            updateScore();
+            //===================================================================
         }
         else
         {
@@ -118,11 +128,35 @@ public class GameManager : MonoBehaviour
 
     }
 
+    public void addMultipler()
+    {
+        for (int i = 0; i < walls.Count; i++)
+        {
+            walls[i].GetComponent<Wall>().multipler = multipler;
+        }
+        for (int i = 0; i < backgrounds.Count; i++)
+        {
+            backgrounds[i].GetComponent<Background>().multipler = multipler;
+        }
+        for (int i = 0; i < spikes.Count; i++)
+        {
+            spikes[i].GetComponent<Spike>().multipler = multipler;
+        }
+        for (int i = 0; i < spawnZones.Count; i++)
+        {
+            spawnZones[i].GetComponent<SpawnZone>().updateMultipler(multipler);
+        }
+    }
+
+    public void updateScore()
+    {
+        scoreCounter.text = "Score: " + (int)(score);
+    }
+
     public void addScore(int num)
     {
         score = score + num;
-        Debug.Log("Current Score: " + score);
-        scoreCounter.text = "Score: " + score.ToString();
+        updateScore();
     }
 
     public void endGame()
@@ -157,12 +191,12 @@ public class GameManager : MonoBehaviour
     //Resets the wall timer
     public void resetWallTimer()
     {
-        wallTimer = 1;
+        wallTimer = 10/speed;
     }
 
     public void resetBackgroundTimer()
     {
-        backgroundTimer = 12;
+        backgroundTimer = 10.8f/(speed/10);
     }
 
     //Creates two new walls at the given x coordinates
@@ -176,10 +210,12 @@ public class GameManager : MonoBehaviour
         GameObject newWall = Instantiate(wall);
         newWall.GetComponent<Transform>().position = new Vector2 (distance, 20);
         newWall.GetComponent<Wall>().wallSpeed = speed;
+        newWall.GetComponent<Wall>().multipler = multipler;
         walls.Add(newWall);
         newWall = Instantiate(wall);
         newWall.GetComponent<Transform>().position = new Vector2 (-distance, 20);
         newWall.GetComponent<Wall>().wallSpeed = speed;
+        newWall.GetComponent<Wall>().multipler = multipler;
         walls.Add(newWall);
 
         destroyWalls();
@@ -197,10 +233,12 @@ public class GameManager : MonoBehaviour
         GameObject newWall = Instantiate(wall);
         newWall.GetComponent<Transform>().position = new Vector2 (distance, objY);
         newWall.GetComponent<Wall>().wallSpeed = speed;
+        newWall.GetComponent<Wall>().multipler = multipler;
         walls.Add(newWall);
         newWall = Instantiate(wall);
         newWall.GetComponent<Transform>().position = new Vector2 (-distance, objY);
         newWall.GetComponent<Wall>().wallSpeed = speed;
+        newWall.GetComponent<Wall>().multipler = multipler;
         walls.Add(newWall);
 
         destroyWalls();
@@ -212,10 +250,14 @@ public class GameManager : MonoBehaviour
     {
         GameObject newSpawnZone = Instantiate(spawnZone, new Vector2(distance - 3, 20), new Quaternion(0f,0f,0f,1f));
         newSpawnZone.GetComponent<SpawnZone>().speed = speed;
+        newSpawnZone.GetComponent<SpawnZone>().updateMultipler(multipler);
+        newSpawnZone.GetComponent<SpawnZone>().scoreOnSpawn = score;
         spawnZones.Add(newSpawnZone);
         newSpawnZone = Instantiate(spawnZone, new Vector2(-distance + 3, 23), new Quaternion(0f, 0f, 0f, 1f));
         spawnZones.Add(newSpawnZone);
         newSpawnZone.GetComponent<SpawnZone>().speed = speed;
+        newSpawnZone.GetComponent<SpawnZone>().updateMultipler(multipler);
+        newSpawnZone.GetComponent<SpawnZone>().scoreOnSpawn = score;
     }
 
     //Create spikes in between wall gaps to prevent the player from escaping the walls
@@ -226,10 +268,13 @@ public class GameManager : MonoBehaviour
             GameObject newSpike = Instantiate(spike);
             newSpike.GetComponent<Transform>().position = new Vector3(i-2.4f, 15.2f, 0);
             newSpike.GetComponent<Spike>().spikeSpeed = speed;
+            newSpike.GetComponent<Spike>().multipler = multipler;
+
             spikes.Add(newSpike);
             newSpike = Instantiate(spike);
             newSpike.GetComponent<Transform>().position = new Vector3(-i+2.4f, 15.2f, 0);
             newSpike.GetComponent<Spike>().spikeSpeed = speed;
+            newSpike.GetComponent<Spike>().multipler = multipler;
             spikes.Add(newSpike);
         }
 
@@ -284,6 +329,7 @@ public class GameManager : MonoBehaviour
         GameObject newBackground = Instantiate(background);
         newBackground.GetComponent<Transform>().position = new Vector3(0, objY, 0);
         newBackground.GetComponent<Background>().backgroundSpeed = speed / 10;
+        newBackground.GetComponent<Background>().multipler = multipler;
         backgrounds.Add(newBackground);
 
         destroyBackgrounds();

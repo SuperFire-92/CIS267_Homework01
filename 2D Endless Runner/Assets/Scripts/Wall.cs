@@ -5,6 +5,7 @@ using UnityEngine;
 public class Wall : MonoBehaviour
 {
     public float wallSpeed;
+    public float multipler;
     public bool dead;
 
     private void Start()
@@ -17,7 +18,7 @@ public class Wall : MonoBehaviour
     }
     void Update()
     {
-        transform.position = new Vector3(transform.position.x, transform.position.y - wallSpeed * Time.deltaTime, transform.position.z);
+        transform.position = new Vector3(transform.position.x, transform.position.y - wallSpeed * multipler * Time.deltaTime, transform.position.z);
         if (transform.position.y < -20)
         {
             dead = true;

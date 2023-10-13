@@ -6,6 +6,8 @@ using UnityEngine;
 public class SpawnZone : MonoBehaviour
 {
     public float speed;
+    public float multipler;
+    public float scoreOnSpawn;
     public bool dead;
     public GameObject[] listOfEnemies;
     public GameObject[] listOfCollectables;
@@ -30,12 +32,13 @@ public class SpawnZone : MonoBehaviour
             spawnedObject.transform.position = transform.position;
             spawnedObject.GetComponent<BasicFalling>().speed = speed;
             spawnedObject.GetComponent<BasicFalling>().moveOffset();
+            spawnedObject.GetComponent<BasicFalling>().multipler = multipler;
         }
 
     }
     void Update()
     {
-        transform.position = new Vector3(transform.position.x, transform.position.y - speed * Time.deltaTime, transform.position.z);
+        transform.position = new Vector3(transform.position.x, transform.position.y - speed * multipler * Time.deltaTime, transform.position.z);
         if (spawnedObject != null )
         {
             if (spawnedObject.transform.position.y < -20)
@@ -52,10 +55,19 @@ public class SpawnZone : MonoBehaviour
         }
     }
 
+    public void updateMultipler(float m)
+    {
+        multipler = m;
+        if (spawnedObject != null)
+        {
+            spawnedObject.GetComponent<BasicFalling>().multipler = m;
+        }
+    }
+
     public bool canSpawnObject()
     {
         int spawn = Random.Range(0, 10);
-        if (spawn > 6)
+        if (spawn > 7 - (int)(scoreOnSpawn / 25))
         {
             canSpawn = true;
         }

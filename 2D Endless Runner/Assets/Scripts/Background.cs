@@ -5,6 +5,7 @@ using UnityEngine;
 public class Background : MonoBehaviour
 {
     public float backgroundSpeed;
+    public float multipler;
     public bool dead;
 
     private void Start()
@@ -14,7 +15,7 @@ public class Background : MonoBehaviour
 
     private void Update()
     {
-        transform.position = new Vector3(transform.position.x, transform.position.y - backgroundSpeed * Time.deltaTime, transform.position.z);
+        transform.position = new Vector3(transform.position.x, transform.position.y - backgroundSpeed * multipler * Time.deltaTime, transform.position.z);
         if (transform.position.y < -20)
         {
             dead = true;

@@ -89,7 +89,7 @@ public class PlayerMovement : MonoBehaviour
 
             if (col.collectableType == 0)
             {
-                gameManager.GetComponent<GameManager>().addScore(1);
+                gameManager.GetComponent<GameManager>().addScore(5);
             }
             if (col.collectableType == 1)
             {
