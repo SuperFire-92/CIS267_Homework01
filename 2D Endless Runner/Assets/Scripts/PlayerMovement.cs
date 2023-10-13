@@ -9,6 +9,7 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D playerRigidBody;
     public GameObject gameManager;
     public GameObject miniWall;
+    public List<GameObject> miniWalls;
     public float miniWallOffset;
     public float speed;
     public bool dead;
@@ -19,15 +20,11 @@ public class PlayerMovement : MonoBehaviour
         dead = false;
         playerRigidBody = GetComponent<Rigidbody2D>();
         playerRigidBody.velocity = new Vector2 (-1 * speed, playerRigidBody.velocity.y);
+        miniWalls = new List<GameObject>();
     }
 
-    //// Update is called once per frame
-    //void Update()
-    //{
-    //    changeDirection();
-    //}
-
-    private void LateUpdate()
+    // Update is called once per frame
+    void Update()
     {
         changeDirection();
     }
@@ -57,20 +54,40 @@ public class PlayerMovement : MonoBehaviour
                     makeWall(false);
                 }
             }
+            //Update all miniwalls
+            updateWalls();
         }
     }
 
-    public void forceMoreSpeed(float multiplier)
-    {
-        playerRigidBody.velocity = new Vector2(playerRigidBody.velocity.x * multiplier, playerRigidBody.velocity.y);
-        speed = speed * multiplier;
-    }
-
+    //Make a cute lil miniWall
     public void makeWall(bool LoR)
     {
         GameObject curMini = Instantiate(miniWall);
         curMini.GetComponent<Transform>().position = new Vector3(transform.position.x - (LoR ? -miniWallOffset : miniWallOffset), transform.position.y, transform.position.z);
         curMini.GetComponent<MiniWall>().speed = gameManager.GetComponent<GameManager>().speed;
+        curMini.GetComponent<MiniWall>().multipler = gameManager.GetComponent<GameManager>().multipler;
+        miniWalls.Add(curMini);
+    }
+
+    public void updateWalls()
+    {
+        //Delete all miniwalls that no longer exist (due to the way Lists work, can miss some)
+        for (int i = 0; i < miniWalls.Count; i++)
+        {
+            if (miniWalls[i] == null)
+            {
+                miniWalls.RemoveAt(i);
+            }
+        }
+        //Fix all wall's current multipler (for time powerup)
+        for (int i = 0; i < miniWalls.Count; i++)
+        {
+            //Make sure the miniWall still exists
+            if (miniWalls[i] != null)
+            {
+                miniWalls[i].GetComponent<MiniWall>().multipler = gameManager.GetComponent<GameManager>().multipler;
+            }
+        }
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
