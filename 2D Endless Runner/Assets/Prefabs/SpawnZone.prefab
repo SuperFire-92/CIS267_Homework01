@@ -45,6 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 0
+  multipler: 0
+  scoreOnSpawn: 0
   dead: 0
   listOfEnemies:
   - {fileID: 404866817558481585, guid: c8ae6e985d434d34aaa35bc1d3e4a1ad, type: 3}
@@ -52,3 +54,4 @@ MonoBehaviour:
   listOfCollectables:
   - {fileID: 5383499391461011530, guid: 9f5888e3738770c4f9da3cf3d257dcab, type: 3}
   - {fileID: 1824322750800215798, guid: 969b9e907098d1147b388531b6de6d18, type: 3}
+  - {fileID: 8603608106413957985, guid: 081a5721b16e61d4bbbb4cd31b5b4ac8, type: 3}

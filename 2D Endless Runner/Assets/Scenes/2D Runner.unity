@@ -955,6 +955,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameManager: {fileID: 761493605}
   miniWall: {fileID: 8791918591518850042, guid: c9a0d87c57b17cc43b9171807c9001ec, type: 3}
+  bullet: {fileID: 0}
+  miniWalls: []
   miniWallOffset: 0.5
   speed: 8
   dead: 0

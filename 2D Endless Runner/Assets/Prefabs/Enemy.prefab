@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 3767922688401123107}
   m_Layer: 0
   m_Name: Enemy
-  m_TagString: Kill
+  m_TagString: KillBreakable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -124,6 +124,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 0
+  multipler: 0
   dead: 0
   spawnOffset: 0
 --- !u!114 &259724362555503544

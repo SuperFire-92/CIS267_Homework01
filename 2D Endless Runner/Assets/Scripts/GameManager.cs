@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour
     public GameObject gameOverDisplay;
     public GameObject spawnZone;
     public TMP_Text scoreCounter;
+    public TMP_Text powerupDisplay;
+    public PowerupDisplay pd;
     private int distance;
     private int oldDistance;
     private float distanceTimer;
@@ -63,6 +65,8 @@ public class GameManager : MonoBehaviour
         createBackground(10);
         //Set the slowdown to be false
         slowdown = false;
+        //Attach the powerup display to the script
+        pd = powerupDisplay.GetComponent<PowerupDisplay>();
     }
 
     private void Update()
@@ -100,6 +104,7 @@ public class GameManager : MonoBehaviour
             if (slowdownTimer > 0)
             {
                 slowdownTimer -= Time.deltaTime;
+                pd.setSlowTime(slowdownTimer);
                 if (slowdown == false)
                 {
                     multipler = 0.5f;
@@ -114,6 +119,7 @@ public class GameManager : MonoBehaviour
                     multipler = 1f;
                     addMultipler();
                     slowdown = false;
+                    pd.setSlowTime(0f);
                 }
             }
             //Add 1 to the score every second
@@ -347,5 +353,16 @@ public class GameManager : MonoBehaviour
                 backgrounds.RemoveAt(i);
             }
         }
+    }
+
+    public void setSlowdownTimer(float t)
+    {
+        slowdownTimer = t;
+        pd.setSlowTime(slowdownTimer);
+    }
+
+    public void setNumOfBullets(int b)
+    {
+        pd.setBullets(b);
     }
 }
