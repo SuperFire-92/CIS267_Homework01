@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Kill
   - Collectable
+  - KillBreakable
   layers:
   - Default
   - TransparentFX
