@@ -14,6 +14,7 @@ public class Bullet : MonoBehaviour
 
     private void Update()
     {
+        //Currently does not work, frequently phases through objects without destroying them
         transform.position = new Vector2(transform.position.x, transform.position.y + speed * Time.deltaTime);
         if (transform.position.y > 30)
         {
