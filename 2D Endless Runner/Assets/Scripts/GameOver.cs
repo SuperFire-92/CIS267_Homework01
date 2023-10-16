@@ -10,4 +10,10 @@ public class GameOver : MonoBehaviour
     {
         SceneManager.LoadScene("2D Runner");
     }
+
+    public void mainMenuButtion()
+    {
+        SceneManager.LoadScene("Start Menu");
+    }
+
 }
