@@ -51,7 +51,9 @@ MonoBehaviour:
   listOfEnemies:
   - {fileID: 404866817558481585, guid: c8ae6e985d434d34aaa35bc1d3e4a1ad, type: 3}
   - {fileID: 590993486845635385, guid: d4940042a13966748980e727a53cd6bf, type: 3}
+  - {fileID: 5976557360864833853, guid: cae9bee7cc6df7c469d77be9e82093e0, type: 3}
   listOfCollectables:
   - {fileID: 5383499391461011530, guid: 9f5888e3738770c4f9da3cf3d257dcab, type: 3}
   - {fileID: 1824322750800215798, guid: 969b9e907098d1147b388531b6de6d18, type: 3}
   - {fileID: 8603608106413957985, guid: 081a5721b16e61d4bbbb4cd31b5b4ac8, type: 3}
+  - {fileID: 6764742909608348124, guid: f3d48716e758edf4e97540e3ffeeb985, type: 3}

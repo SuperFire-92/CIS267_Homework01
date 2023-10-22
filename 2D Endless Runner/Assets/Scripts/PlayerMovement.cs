@@ -10,20 +10,26 @@ public class PlayerMovement : MonoBehaviour
     public GameObject gameManager;
     public GameObject miniWall;
     public GameObject bullet;
+    public GameObject blueShield;
     public List<GameObject> miniWalls;
     public List<GameObject> bullets;
     public float miniWallOffset;
     public float speed;
     public bool dead;
     public int numOfBullets;
+    public int numOfShields;
     
     // Start is called before the first frame update
     void Start()
     {
         //Let the game know the player has not died
         dead = false;
-        //Check to see how many bullets the player currently has
+        //Set the number of bullets to be 0
         numOfBullets = 0;
+        //Set the number of shields to be 0
+        numOfShields = 0;
+        //Make sure the shield is invisible
+        activateShield();
         //Store the player's rigidbody
         playerRigidBody = GetComponent<Rigidbody2D>();
         //Set the initial velocity
@@ -113,6 +119,51 @@ public class PlayerMovement : MonoBehaviour
         
     }
 
+    //To run when the player gets hit by a kill collision
+    public void getHit(Collider2D collision)
+    {
+        //If the player has a shield, do not die
+        if (numOfShields >= 3)
+        {
+            //Break the object if it's breakable
+            if (collision.CompareTag("KillBreakable"))
+            {
+                Destroy(collision.gameObject);
+                numOfShields = 0;
+                activateShield();
+                gameManager.GetComponent<GameManager>().setNumOfShields(numOfShields);
+            }
+            //Teleport the player to the center if it was unbreakable (if they did break this object, they would go out of bounds)
+            else if (collision.CompareTag("Kill"))
+            {
+                transform.position = new Vector2(0, transform.position.y);
+                numOfShields = 0;
+                activateShield();
+                gameManager.GetComponent<GameManager>().setNumOfShields(numOfShields);
+            }
+        }
+        //If the player has no shield, die
+        else
+        {
+            dead = true;
+            playerRigidBody.velocity = new Vector2(0, 0);
+            pauseBullets();
+        }
+    }
+
+    //Give the player a blue shield around them if they have a shield
+    public void activateShield()
+    {
+        if (numOfShields >= 3)
+        {
+            blueShield.SetActive(true);
+        }
+        else
+        {
+            blueShield.SetActive(false);
+        }
+    }
+
     //Make a cute lil miniWall
     public void makeWall(bool LoR)
     {
@@ -151,9 +202,7 @@ public class PlayerMovement : MonoBehaviour
         //If the collided trigger is a kill trigger, kill the player
         if (collision.gameObject.CompareTag("Kill") || collision.gameObject.CompareTag("KillBreakable"))
         {
-            dead = true;
-            playerRigidBody.velocity = new Vector2(0, 0);
-            pauseBullets();
+            getHit(collision);
         }
 
         //If the collision is a collectable
@@ -180,6 +229,16 @@ public class PlayerMovement : MonoBehaviour
                     numOfBullets++;
                 }
                 gameManager.GetComponent<GameManager>().setNumOfBullets(numOfBullets);
+            }
+            //If the collectableType is 3, it's a shield powerup. Add a point to our shields.
+            if (col.collectableType == 3)
+            {
+                if (numOfShields < 3)
+                {
+                    numOfShields++;
+                }
+                activateShield();
+                gameManager.GetComponent<GameManager>().setNumOfShields(numOfShields);
             }
         }
     }

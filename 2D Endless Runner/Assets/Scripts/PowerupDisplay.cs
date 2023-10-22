@@ -8,9 +8,12 @@ public class PowerupDisplay : MonoBehaviour
 {
     private TMP_Text display;
     public Image[] bulletImages;
+    public Image[] shieldImages;
+    public Image shield;
     public Image slowTimeImage;
     public float slowTime;
     public int numOfBullets;
+    public int numOfShields;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,6 +23,7 @@ public class PowerupDisplay : MonoBehaviour
         updateDisplay();
         updateSlowtimeDisplay();
         updateBulletDisplay();
+        updateShieldDisplay();
     }
 
     private void updateDisplay()
@@ -27,11 +31,15 @@ public class PowerupDisplay : MonoBehaviour
         display.text =
             "Powerups\n" +
             "\n" +
-            "SlowTime\n" +
-            (int)((slowTime > 0 ? slowTime + 1 : slowTime)) + "s\n" +
+            "Slowdown\n" +
+            Mathf.CeilToInt(slowTime) + "s\n" +
             "\n" +
             "Bullets\n" +
-            numOfBullets;
+            numOfBullets + "\n" +
+            "\n" +
+            "Shield\n" +
+            (numOfShields >= 3 ? "READY" : "X");
+        
     }
 
     private void updateBulletDisplay()
@@ -61,6 +69,29 @@ public class PowerupDisplay : MonoBehaviour
         }
     }
 
+    private void updateShieldDisplay()
+    {
+        for (int i = 0; i < shieldImages.Length; i++)
+        {
+            if (i < numOfShields)
+            {
+                shieldImages[i].color = Color.white;
+            }
+            else
+            {
+                shieldImages[i].color = Color.black;
+            }
+        }
+        if (numOfShields == shieldImages.Length)
+        {
+            shield.color = Color.white;
+        }
+        else
+        {
+            shield.color = Color.black;
+        }
+    }
+
     public void setSlowTime(float t)
     {
         slowTime = t;
@@ -73,5 +104,12 @@ public class PowerupDisplay : MonoBehaviour
         numOfBullets = b;
         updateDisplay();
         updateBulletDisplay();
+    }
+
+    public void setShields(int s)
+    {
+        numOfShields = s;
+        updateDisplay();
+        updateShieldDisplay();
     }
 }

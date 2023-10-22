@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
     public GameObject background;
     public GameObject spike;
     public GameObject gameOverDisplay;
+    public GameObject pauseMenuDisplay;
     public GameObject spawnZone;
     public TMP_Text scoreCounter;
     public TMP_Text powerupDisplay;
@@ -37,6 +38,7 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
+        SaveData.loadScores();
         //Set the starting score
         score = 0;
         //Set the current speed multipler to 1
@@ -67,6 +69,7 @@ public class GameManager : MonoBehaviour
         slowdown = false;
         //Attach the powerup display to the script
         pd = powerupDisplay.GetComponent<PowerupDisplay>();
+        Time.timeScale = 1f;
     }
 
     private void Update()
@@ -101,7 +104,7 @@ public class GameManager : MonoBehaviour
                 createBackground(20);
                 resetBackgroundTimer();
             }
-            if (slowdownTimer > 0)
+            if (slowdownTimer > 0 && Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
             {
                 slowdownTimer -= Time.deltaTime;
                 pd.setSlowTime(slowdownTimer);
@@ -119,13 +122,17 @@ public class GameManager : MonoBehaviour
                     multipler = 1f;
                     addMultipler();
                     slowdown = false;
-                    pd.setSlowTime(0f);
                 }
             }
             //Add 1 to the score every second
             score = score + Time.deltaTime;
             updateScore();
             //===================================================================
+            //Check if the player wishes to pause the game
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                togglePause();
+            }
         }
         else
         {
@@ -134,6 +141,7 @@ public class GameManager : MonoBehaviour
 
     }
 
+    //Add a multipler to slow down the game for the slowdown powerup
     public void addMultipler()
     {
         for (int i = 0; i < walls.Count; i++)
@@ -154,38 +162,63 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //Update the score text to show the current score
     public void updateScore()
     {
         scoreCounter.text = "Score: " + (int)(score);
     }
 
+    //Add an amount to the current score
     public void addScore(int num)
     {
         score = score + num;
         updateScore();
     }
 
+    //Pause the game and show the game over menu
     public void endGame()
     {
         //Pause all objects
-        for (int i = 0; i < walls.Count; i++)
+        //for (int i = 0; i < walls.Count; i++)
+        //{
+        //    walls[i].GetComponent<Wall>().pauseObject();
+        //}
+        //for (int i = 0; i < backgrounds.Count; i++)
+        //{
+        //    backgrounds[i].GetComponent<Background>().pauseObject();
+        //}
+        //for (int i = 0; i < spikes.Count; i++)
+        //{
+        //    spikes[i].GetComponent<Spike>().pauseObject();
+        //}
+        //for (int i = 0; i < spawnZones.Count; i++)
+        //{
+        //    spawnZones[i].GetComponent<SpawnZone>().pauseObject();
+        //}
+        if (Time.timeScale != 0f)
         {
-            walls[i].GetComponent<Wall>().pauseObject();
+            Time.timeScale = 0f;
+            //Add a game over display
+            gameOverDisplay.SetActive(true);
+
+            SaveData.saveNewScore(score);
         }
-        for (int i = 0; i < backgrounds.Count; i++)
+
+    }
+
+    //Pause/unpause the game
+    public void togglePause()
+    {
+        if (Time.timeScale == 1f)
         {
-            backgrounds[i].GetComponent<Background>().pauseObject();
+            Time.timeScale = 0f;
+            pauseMenuDisplay.SetActive(true);
         }
-        for (int i = 0; i < spikes.Count; i++)
+        else if (Time.timeScale == 0f && !gameEnd)
         {
-            spikes[i].GetComponent<Spike>().pauseObject();
+            pauseMenuDisplay.SetActive(false);
+            Time.timeScale = 1f;
         }
-        for (int i = 0; i < spawnZones.Count; i++)
-        {
-            spawnZones[i].GetComponent<SpawnZone>().pauseObject();
-        }
-        //Add a game over display
-        gameOverDisplay.SetActive(true);
     }
 
     //Resets the distance timer
@@ -355,14 +388,22 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //Set the slowdowntimer on the display and on the timer
     public void setSlowdownTimer(float t)
     {
-        slowdownTimer = t;
+        slowdownTimer = (slowdownTimer + t >= 4f ? 4f : slowdownTimer + t);
         pd.setSlowTime(slowdownTimer);
     }
 
+    //Set the number of bullets in the display
     public void setNumOfBullets(int b)
     {
         pd.setBullets(b);
+    }
+
+    //Set the number of shields in the display
+    public void setNumOfShields(int s)
+    {
+        pd.setShields(s);
     }
 }
